@@ -9,6 +9,10 @@ SharedFields:
   Hint: __Masters
   Type: TreelistEx
   Value: "{0E24292F-D7A5-4BA2-BCA0-CD5F14A89634}"
+- ID: "9135200a-5626-4dd8-ab9d-d665b8c11748"
+  Hint: __Never publish
+  Type: checkbox
+  Value: 1
 - ID: "a0cb3965-8884-4c7a-8815-b6b2e5ced162"
   Hint: __Editors
   Type: TreelistEx
