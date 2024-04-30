@@ -89,12 +89,13 @@ namespace Brightcove.DataExchangeFramework.Helpers
             }
             lastSyncTime = DateTime.Parse((string)itemModel["LastSyncTime"]);
 
-            Item item = Sitecore.Context.ContentDatabase.GetItem(new ID(itemModel.GetItemId()));
+            //TODO: The sync time is going to be handled differently now
+            /*Item item = Sitecore.Context.ContentDatabase.GetItem(new ID(itemModel.GetItemId()));
 
             if (item != null)
             {
                 itemLastModifiedTime = ((DateField)item.Fields["__Updated"]).DateTime;
-            }
+            }*/
 
             if (itemModel.ContainsKey("LastModifiedTime") && !string.IsNullOrWhiteSpace((string)itemModel["LastModifiedTime"]))
             {

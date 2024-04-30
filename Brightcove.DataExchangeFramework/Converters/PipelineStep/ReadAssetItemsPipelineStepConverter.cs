@@ -31,11 +31,11 @@ namespace Brightcove.DataExchangeFramework.Converters
 
             if (endpointId != null)
             {
-                Item endpointItem = Sitecore.Context.ContentDatabase.GetItem(new ID(endpointId));
+                ItemModel endpointItem = ItemModelRepository.Get(endpointId);
 
                 if(endpointItem != null)
                 {
-                    resolveAssetItemSettings.AcccountItemId = endpointItem["Account"];
+                    resolveAssetItemSettings.AcccountItemId = this.GetStringValue(endpointItem, "Account") ?? "";
                     resolveAssetItemSettings.RelativePath = this.GetStringValue(source, "RelativePath") ?? "";
                 }
             }

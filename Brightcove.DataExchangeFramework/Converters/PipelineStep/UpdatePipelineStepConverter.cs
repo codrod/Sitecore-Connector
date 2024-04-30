@@ -59,7 +59,7 @@ namespace Brightcove.DataExchangeFramework.Converters
                 return;
             }
 
-            Item accountItem = Sitecore.Context.ContentDatabase.GetItem(new ID(accountItemId));
+            ItemModel accountItem = ItemModelRepository.Get(accountItemId);
 
             if(accountItem == null)
             {
@@ -70,9 +70,9 @@ namespace Brightcove.DataExchangeFramework.Converters
 
             if (accountItem != null)
             {
-                webApiSettings.AccountId = accountItem["AccountId"];
-                webApiSettings.ClientId = accountItem["ClientId"];
-                webApiSettings.ClientSecret = accountItem["ClientSecret"];
+                webApiSettings.AccountId = this.GetStringValue(accountItem, "AccountId") ?? "";
+                webApiSettings.ClientId = this.GetStringValue(accountItem, "ClientId") ?? "";
+                webApiSettings.ClientSecret = this.GetStringValue(accountItem, "ClientSecret") ?? "";
             }
 
             endpointSettings.BrightcoveEndpoint.AddPlugin(webApiSettings);

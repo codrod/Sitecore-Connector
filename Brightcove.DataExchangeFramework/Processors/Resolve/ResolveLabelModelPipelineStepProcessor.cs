@@ -16,14 +16,11 @@ namespace Brightcove.DataExchangeFramework.Processors
 {
     public class ResolveLabelModelPipelineStepProcessor : BasePipelineStepWithWebApiEndpointProcessor
     {
-        BrightcoveService service;
-
         protected override void ProcessPipelineStepInternal(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
         {
             try
             {
-                var resolveAssetModelSettings = GetPluginOrFail<ResolveAssetModelSettings>();
-                service = new BrightcoveService(WebApiSettings.AccountId, WebApiSettings.ClientId, WebApiSettings.ClientSecret);
+                ResolveAssetModelSettings resolveAssetModelSettings = GetPluginOrFail<ResolveAssetModelSettings>();
                 ItemModel item = (ItemModel)pipelineContext.GetObjectFromPipelineContext(resolveAssetModelSettings.AssetItemLocation);
                 string labelField = (string)item["Label"];
                 string newPathField = (string)item["NewPath"];
@@ -50,7 +47,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                 {
                     //The item was probably deleted or the ID has been modified incorrectly so we delete the item
                     LogWarn($"Deleting the brightcove item '{item.GetItemId()}' because the corresponding brightcove model '{labelField}' could not be found");
-                    Sitecore.Context.ContentDatabase.GetItem(new ID(item.GetItemId())).Delete();
+                    itemModelRepository.Delete(item.GetItemId());
                     pipelineContext.Finished = true;
                 }
             }
@@ -64,15 +61,13 @@ namespace Brightcove.DataExchangeFramework.Processors
         private Label CreateLabel(string labelPath, ItemModel itemModel)
         {
             Label label = service.CreateLabel(labelPath);
-            Item item = Sitecore.Context.ContentDatabase.GetItem(new ID(itemModel.GetItemId()), Language.Parse(itemModel.GetLanguage()));
 
-            item.Editing.BeginEdit();
-            item["Label"] = label.Path;
-            item["NewPath"] = "";
-            item["LastSyncTime"] = DateTime.UtcNow.ToString();
-            item.Name = label.SitecoreName;
-            item["__Display name"] = label.Path;
-            item.Editing.EndEdit();
+            itemModel["Label"] = label.Path;
+            itemModel["NewPath"] = "";
+            itemModel["ItemName"] = label.SitecoreName;
+            itemModel["__Display name"] = label.Path;
+
+            itemModelRepository.Update(itemModel.GetItemId(), itemModel);
 
             return label;
         }

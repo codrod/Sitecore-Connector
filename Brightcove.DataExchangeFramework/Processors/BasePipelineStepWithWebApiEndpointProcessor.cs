@@ -10,6 +10,7 @@ using Sitecore.DataExchange.Extensions;
 using Sitecore.DataExchange.Models;
 using Sitecore.DataExchange.Plugins;
 using Sitecore.DataExchange.Processors.PipelineSteps;
+using Sitecore.DataExchange.Providers.Sc.Plugins;
 using Sitecore.DataExchange.Repositories;
 using Sitecore.SecurityModel;
 using Sitecore.Services.Core.Diagnostics;
@@ -26,6 +27,10 @@ namespace Brightcove.DataExchangeFramework.Processors
     {
         protected WebApiSettings WebApiSettings { get; set; }
         protected Endpoint EndpointFrom { get; set; }
+
+        protected BrightcoveService service { get; set; }
+
+        protected IItemModelRepository itemModelRepository { get; set; }
 
         protected override void ProcessPipelineStep(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
         {
@@ -65,6 +70,9 @@ namespace Brightcove.DataExchangeFramework.Processors
                 LogFatal("Pipeline step processing will abort because the Brightcove web API settings are invalid: "+WebApiSettings.ValidationMessage);
                 return;
             }
+
+            service = new BrightcoveService(WebApiSettings.AccountId, WebApiSettings.ClientId, WebApiSettings.ClientSecret);
+            itemModelRepository = Sitecore.DataExchange.Context.ItemModelRepository;
 
             try
             {

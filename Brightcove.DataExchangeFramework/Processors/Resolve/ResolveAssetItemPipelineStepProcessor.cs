@@ -22,6 +22,7 @@ using Sitecore.Services.Core.Model;
 using Sitecore.DataExchange.Providers.Sc.Extensions;
 using Sitecore.Collections;
 using Sitecore.Globalization;
+using Brightcove.DataExchangeFramework.Helpers;
 
 namespace Brightcove.DataExchangeFramework.Processors
 {
@@ -36,19 +37,9 @@ namespace Brightcove.DataExchangeFramework.Processors
                 return null;
             }
 
-            //We need to store the resolve asset item plugin in the global Sitecore.DataExchangeContext so it
-            //can be used in the VideoIdsPropertyValueReader
-            if (Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>() == null)
-            {
-                Sitecore.DataExchange.Context.Plugins.Add(pipelineContext.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>());
-            }
-
             string language = pipelineContext.GetPlugin<SelectedLanguagesSettings>()?.Languages?.FirstOrDefault() ?? "en";
-            string parentItemPath = GetAssetParentItemPath(pipelineContext);
             string parentItemMediaPath = GetAssetParentItemMediaPath(pipelineContext);
-
-            Database database = Sitecore.Configuration.Factory.GetDatabase(repository.DatabaseName);
-            Item parentItem = database?.GetItem(parentItemPath, Language.Parse(language));
+            Item parentItem = pipelineContext.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>().ParentItem;
 
             if (parentItem == null)
             {
@@ -61,11 +52,12 @@ namespace Brightcove.DataExchangeFramework.Processors
 
             if (BucketManager.IsBucket(parentItem))
             {
-                IProviderSearchContext searchContext = ContentSearchManager.GetIndex($"sitecore_{repository.DatabaseName}_index").CreateSearchContext();
-
-                //Since we must search the index becasue the target folder is a bucket the items must have a field called 'ID' that can be used to identify them
-                AssetSearchResult searchResult = searchContext.GetQueryable<AssetSearchResult>().FirstOrDefault(x => x.Path.Contains(parentItemMediaPath) && x.ID == convertedValue && x.Language == language);
-                resolvedItem = searchResult?.GetItem()?.GetItemModel();
+                using (IProviderSearchContext searchContext = ContentSearchManager.GetIndex(IItemModelRepositoryHelper.GetIndexName(repository)).CreateSearchContext())
+                {
+                    //Since we must search the index becasue the target folder is a bucket the items must have a field called 'ID' that can be used to identify them
+                    AssetSearchResult searchResult = searchContext.GetQueryable<AssetSearchResult>().FirstOrDefault(x => x.Path.Contains(parentItemMediaPath) && x.ID == convertedValue && x.Language == language);
+                    resolvedItem = searchResult?.GetItem()?.GetItemModel();
+                }
             }
             else
             {
@@ -86,25 +78,16 @@ namespace Brightcove.DataExchangeFramework.Processors
             return resolvedItem;
         }
 
-        private string GetAssetParentItemPath(PipelineContext context)
-        {
-            var settings = context.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>();
-            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
-
-            return accountItem.Paths.Path + "/" + settings.RelativePath;
-        }
-
         private string GetAssetParentItemMediaPath(PipelineContext context)
         {
             var settings = context.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>();
-            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
-
-            return accountItem.Paths.MediaPath + "/" + settings.RelativePath;
+            return settings.AccountItem.Paths.MediaPath + "/" + settings.RelativePath;
         }
 
         protected override Guid GetParentItemIdForNewItem(IItemModelRepository repository, ResolveSitecoreItemSettings settings, PipelineContext pipelineContext, ILogger logger)
         {
-            return Sitecore.Context.ContentDatabase.GetItem(GetAssetParentItemPath(pipelineContext)).ID.Guid;
+            var assetSettings = pipelineContext.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>();
+            return assetSettings.ParentItem.ID.Guid;
         }
 
         public override object CreateNewObject(object identifierValue, PipelineStep pipelineStep, PipelineContext pipelineContext, ILogger logger)
