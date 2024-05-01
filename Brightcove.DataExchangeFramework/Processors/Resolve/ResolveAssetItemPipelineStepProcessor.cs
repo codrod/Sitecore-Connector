@@ -28,6 +28,21 @@ namespace Brightcove.DataExchangeFramework.Processors
 {
     public class ResolveAssetItemPipelineStepProcessor : ResolveSitecoreItemStepProcessor
     {
+        protected override void ProcessPipelineStep(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
+        {
+            try
+            {
+                base.ProcessPipelineStep(pipelineStep, pipelineContext, logger);
+            }
+            catch(Exception ex)
+            {
+                logger.Error($"Failed to resolve the sitecore item because an unexpected error occured", ex);
+                BrightcoveSyncSettingsHelper.SetErrorFlag(pipelineContext);
+                pipelineContext.Finished = true;
+                pipelineContext.CriticalError = false;
+            }
+        }
+
         protected override ItemModel DoSearch(object value, ResolveSitecoreItemSettings resolveItemSettings, IItemModelRepository repository, PipelineContext pipelineContext, ILogger logger)
         {
             var valueReader = resolveItemSettings.MatchingFieldValueAccessor?.ValueReader as SitecoreItemFieldReader;

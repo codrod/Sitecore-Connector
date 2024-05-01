@@ -6,6 +6,7 @@ using Sitecore.Data.Items;
 using Sitecore.DataExchange.Attributes;
 using Sitecore.DataExchange.Contexts;
 using Sitecore.DataExchange.Converters.PipelineSteps;
+using Sitecore.DataExchange.Extensions;
 using Sitecore.DataExchange.Models;
 using Sitecore.DataExchange.Plugins;
 using Sitecore.DataExchange.Processors.PipelineSteps;
@@ -22,27 +23,25 @@ namespace Brightcove.DataExchangeFramework.Processors
 {
     public class GetVideosPipelineStepProcessor : BasePipelineStepWithWebApiEndpointProcessor
     {
-        BrightcoveService service;
         int totalCount = 0;
+        string query = "";
 
         protected override void ProcessPipelineStepInternal(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
         {
-            try
+            DateTime lastSyncStartTime = GetPluginOrFail<BrightcoveSyncSettings>(pipelineContext.GetCurrentPipelineBatch()).LastSyncStartTime;
+
+            if (lastSyncStartTime != DateTime.MinValue)
             {
-                service = new BrightcoveService(WebApiSettings.AccountId, WebApiSettings.ClientId, WebApiSettings.ClientSecret);
-
-                totalCount = service.VideosCount();
-                LogDebug("Read " + totalCount + " video model(s) from web API");
-
-                var data = GetIterableData(pipelineStep);
-                var dataSettings = new IterableDataSettings(data);
-
-                pipelineContext.AddPlugin(dataSettings);
+                query = $"+updated_at:[{lastSyncStartTime.ToString()} TO *]";
             }
-            catch (Exception ex)
-            {
-                LogError($"Failed to get the brightcove models because an unexpected error has occured", ex);
-            }
+
+            totalCount = service.VideosCount(query);
+            LogInfo("Identified " + totalCount + " video model(s) that have been modified since last sync "+ lastSyncStartTime);
+
+            var data = GetIterableData(pipelineStep);
+            var dataSettings = new IterableDataSettings(data);
+
+            pipelineContext.AddPlugin(dataSettings);
         }
 
         protected virtual IEnumerable<Video> GetIterableData(PipelineStep pipelineStep)
@@ -51,9 +50,8 @@ namespace Brightcove.DataExchangeFramework.Processors
 
             for (int offset = 0; offset < totalCount; offset += limit)
             {
-                foreach (Video video in service.GetVideos(offset, limit))
+                foreach (Video video in service.GetVideos(offset, limit, "created_at", query))
                 {
-                    video.LastSyncTime = DateTime.UtcNow;
                     yield return video;
                 }
             }

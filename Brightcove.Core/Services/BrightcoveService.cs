@@ -519,12 +519,12 @@ namespace Brightcove.Core.Services
             return players;
         }
 
-        public ExperienceList GetExperiences()
+        public ExperienceList GetExperiences(string query = "", string sort = "")
         {
             HttpRequestMessage request = new HttpRequestMessage();
 
             request.Method = HttpMethod.Get;
-            request.RequestUri = new Uri($"{experienceBaseUrl}/{accountId}/experiences");
+            request.RequestUri = new Uri($"{experienceBaseUrl}/{accountId}/experiences?query={query}&sort={sort}");
 
             HttpResponseMessage response = SendRequest(request);
 
@@ -719,12 +719,12 @@ namespace Brightcove.Core.Services
             return true;
         }
 
-        public int VideosCount()
+        public int VideosCount(string query = "")
         {
             HttpRequestMessage request = new HttpRequestMessage();
 
             request.Method = HttpMethod.Get;
-            request.RequestUri = new Uri($"{cmsBaseUrl}/{accountId}/counts/videos");
+            request.RequestUri = new Uri($"{cmsBaseUrl}/{accountId}/counts/videos?query={query}");
 
             HttpResponseMessage response = SendRequest(request);
             Count count = JsonConvert.DeserializeObject<Count>(response.Content.ReadAsString());
