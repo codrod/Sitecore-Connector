@@ -37,6 +37,10 @@ namespace Brightcove.DataExchangeFramework.Converters
                 {
                     resolveAssetItemSettings.AcccountItemId = this.GetStringValue(endpointItem, "Account") ?? "";
                     resolveAssetItemSettings.RelativePath = this.GetStringValue(source, "RelativePath") ?? "";
+
+                    Database database = Sitecore.Configuration.Factory.GetDatabase(ItemModelRepository.DatabaseName);
+                    resolveAssetItemSettings.AccountItem = database.GetItem(resolveAssetItemSettings.AcccountItemId);
+                    resolveAssetItemSettings.ParentItem = database.GetItem(resolveAssetItemSettings.AccountItem?.Paths?.Path + "/" + resolveAssetItemSettings.RelativePath);
                 }
             }
 

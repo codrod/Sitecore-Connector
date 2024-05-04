@@ -1,10 +1,12 @@
-﻿using Brightcove.DataExchangeFramework.Settings;
+﻿using Brightcove.DataExchangeFramework.Helpers;
+using Brightcove.DataExchangeFramework.Settings;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.DataExchange.Attributes;
 using Sitecore.DataExchange.Contexts;
+using Sitecore.DataExchange.Extensions;
 using Sitecore.DataExchange.Local.Extensions;
 using Sitecore.DataExchange.Models;
 using Sitecore.DataExchange.Providers.Sc.Extensions;
@@ -17,13 +19,36 @@ using Sitecore.Services.Infrastructure.Sitecore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Sitecore.ContentSearch.Linq.Extensions.ReflectionExtensions;
 
 namespace Brightcove.DataExchangeFramework.Processors
 {
     [RequiredEndpointPlugins(new Type[] { typeof(ItemModelRepositorySettings) })]
     public class ReadAssetItemsPipelineStepProcessor : ReadSitecoreItemsStepProcessor
     {
+        DateTime lastSyncFinishTime;
+
+        protected override void ProcessPipelineStep(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
+        {
+            try
+            {
+                var syncSettings = pipelineContext.GetCurrentPipelineBatch().GetPlugin<BrightcoveSyncSettings>();
+
+                if(syncSettings != null)
+                {
+                    lastSyncFinishTime = syncSettings.LastSyncFinishTime;
+                }
+
+                base.ProcessPipelineStep(pipelineStep, pipelineContext, logger);
+            }
+            catch(Exception ex)
+            {
+                logger.Error("Failed to read sitecore items because an unexpected error occured", ex);
+                BrightcoveSyncSettingsHelper.SetErrorFlag(pipelineContext);
+                pipelineContext.Finished = true;
+                pipelineContext.CriticalError = false;
+            }
+        }
+
         public override IEnumerable<ItemModel> GetSitecoreItemModels(
           Endpoint endpoint,
           ReadSitecoreItemModelsSettings readSitecoreItemModelsSettings,
@@ -60,8 +85,15 @@ namespace Brightcove.DataExchangeFramework.Processors
                     query = query.Where(x => x.TemplateId == templateId);
                 }
 
+                if(lastSyncFinishTime != DateTime.MinValue)
+                {
+                    DateTime localTime = lastSyncFinishTime.ToLocalTime();
+                    query = query.Where(x => x.Updated > localTime);
+                }
+
                 var searchResults = query.ToList();
                 IEnumerable<ItemModel> itemModels = searchResults.Select(r => modelRepository.Get(r.ItemId.ToGuid(), language)).Where(m => m != null);
+                this.Logger.Info("Identified " + itemModels.Count() + " sitecore items that have been modified since last sync "+lastSyncFinishTime);
 
                 return itemModels;
             }
@@ -70,9 +102,7 @@ namespace Brightcove.DataExchangeFramework.Processors
         private string GetAssetParentItemMediaPath(PipelineContext context)
         {
             var settings = context.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>();
-            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
-
-            return accountItem.Paths.MediaPath + "/" + settings.RelativePath;
+            return settings.ParentItem.Paths.MediaPath;
         }
     }
 }

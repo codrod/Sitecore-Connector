@@ -29,72 +29,28 @@ namespace Brightcove.DataExchangeFramework.Processors
     public class UpdateVideoModelPipelineStepProcessor : BasePipelineStepProcessor
     {
         BrightcoveService service;
-        IItemModelRepository itemModelRepository;
 
         protected override void ProcessPipelineStepInternal(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
         {
-            try
+            var mappingSettings = GetPluginOrFail<MappingSettings>();
+            var endpointSettings = GetPluginOrFail<BrightcoveEndpointSettings>();
+            var webApiSettings = GetPluginOrFail<WebApiSettings>(endpointSettings.BrightcoveEndpoint);
+
+            service = new BrightcoveService(webApiSettings.AccountId, webApiSettings.ClientId, webApiSettings.ClientSecret);
+            Video video = (Video)pipelineContext.GetObjectFromPipelineContext(mappingSettings.TargetObjectLocation);
+            ItemModel itemModel = (ItemModel)pipelineContext.GetObjectFromPipelineContext(mappingSettings.SourceObjectLocation);
+
+            if (DeleteVideo(video, itemModel))
             {
-                var mappingSettings = GetPluginOrFail<MappingSettings>();
-                var endpointSettings = GetPluginOrFail<BrightcoveEndpointSettings>();
-                var webApiSettings = GetPluginOrFail<WebApiSettings>(endpointSettings.BrightcoveEndpoint);
-                itemModelRepository = GetPluginOrFail<ItemModelRepositorySettings>(endpointSettings.SitecoreEndpoint).ItemModelRepository;
-
-                service = new BrightcoveService(webApiSettings.AccountId, webApiSettings.ClientId, webApiSettings.ClientSecret);
-                Video video = (Video)pipelineContext.GetObjectFromPipelineContext(mappingSettings.TargetObjectLocation);
-                ItemModel itemModel = (ItemModel)pipelineContext.GetObjectFromPipelineContext(mappingSettings.SourceObjectLocation);
-                Item item = Sitecore.Context.ContentDatabase.GetItem(itemModel.GetItemId().ToString(), Language.Parse(itemModel.GetLanguage()));
-
-                DateTime lastSyncTime = DateTime.UtcNow;
-                DateField lastModifiedTime = item.Fields["__Updated"];
-                bool isNewVideo = string.IsNullOrWhiteSpace(item["LastSyncTime"]);
-
-                if (!isNewVideo)
-                {
-                    lastSyncTime = DateTime.Parse(item["LastSyncTime"]);
-                }
-
-                if (DeleteVideo(video, itemModel))
-                {
-                    return;
-                }
-
-                ApplyMappings(mappingSettings.ModelMappingSets, itemModel, video);
-
-                //If the brightcove item has been modified since the last sync (or is new) then send the updates to brightcove
-                //Unless the brightcove model has already been modified since the last sync (presumably outside of Sitecore)
-                if (isNewVideo || lastModifiedTime.DateTime > lastSyncTime)
-                {
-                    if (isNewVideo || video.LastModifiedDate < lastSyncTime)
-                    {
-                        UpdateVideo(video);
-                        UpdateFolder(video, itemModel);
-
-                        if (isNewVideo)
-                        {
-                            item.Editing.BeginEdit();
-                            item["LastSyncTime"] = DateTime.UtcNow.ToString();
-                            item.Editing.EndEdit();
-                        }
-
-                        LogDebug($"Updated the brightcove video model '{video.Id}'");
-                    }
-                    else
-                    {
-                        LogWarn($"Ignored changes made to brightcove item '{item.ID}' because the brightcove model '{video.Id}' has been modified since last sync. Please run the pull pipeline to get the latest changes");
-                    }
-                }
-                else
-                {
-                    LogDebug($"Ignored the brightcove item '{item.ID}' because it has not been updated since last sync");
-                }
-
-                UpdateVariants(itemModelRepository, mappingSettings.VariantMappingSets, itemModel, video);
+                return;
             }
-            catch(Exception ex)
-            {
-                LogError($"An unexpected error occured updating the model", ex);
-            }
+
+            ApplyMappings(mappingSettings.ModelMappingSets, itemModel, video);
+            //video.Variants = ApplyMappingsForVariants(itemModelRepository, mappingSettings.VariantMappingSets, itemModel, video);
+
+            LogDebug($"Updated the brightcove video model '{video.Id}'");
+            UpdateVideo(video);
+            UpdateFolder(video, itemModel);
         }
 
         private void ApplyMappings(IEnumerable<IMappingSet> mappingSets, ItemModel item, object model)
@@ -149,10 +105,11 @@ namespace Brightcove.DataExchangeFramework.Processors
                 if (!message.Contains("custom_fields"))
                     throw ex;
 
-                LogWarn($"The video model {video.Id} contains invalid custom fields so the custom fields will not be updated. Please verify all of the custom fields have been defined properly.");
+                LogWarn($"The video model (or one of its variants) {video.Id} contains invalid custom fields so the custom fields will not be updated. Please verify all of the custom fields have been defined properly.");
 
                 //Rerun with the invalid custom fields removed so the rest of the updates are made
                 video.CustomFields = null;
+                video.Variants = null;
                 UpdateVideo(video);
                 return;
             }
@@ -182,65 +139,35 @@ namespace Brightcove.DataExchangeFramework.Processors
             }
         }
 
-        public void UpdateVariants(IItemModelRepository itemModelRepository, IEnumerable<IMappingSet> mappingSets, ItemModel item, Video model)
+        public List<VideoVariant> ApplyMappingsForVariants(IItemModelRepository itemModelRepository, IEnumerable<IMappingSet> mappingSets, ItemModel item, Video model)
         {
             var variantItems = itemModelRepository.GetChildren(item.GetItemId(), item.GetLanguage());
+            var variantModels = new List<VideoVariant>();
 
             foreach(ItemModel variantItem in variantItems)
             {
-                try
+                VideoVariant variantModel = new VideoVariant()
                 {
-                    VideoVariant variantModel = new VideoVariant()
-                    {
-                        Id = model.Id
-                    };
+                    Id = model.Id
+                };
 
-                    ApplyMappings(mappingSets, variantItem, variantModel);
-
-                    if(!ResolveVideoVariant(variantModel, variantItem))
-                    {
-                        return;
-                    }    
-
-                    if(DeleteVideoVariant(variantModel, variantItem))
-                    {
-                        return;
-                    }
-
-                    SyncStatus status = ItemUpdater.GetSyncStatus(variantItem);
-
-                    if (status == SyncStatus.NewItem)
-                    {
-                        CreateVideoVariant(variantModel, variantItem);
-                        LogInfo($"Created the variant model '{model.Id}:{variantModel.Language}'");
-
-                        UpdateVideoVariant(variantModel);
-                        LogInfo($"Updated the variant model '{model.Id}:{variantModel.Language}'");
-                    }
-
-                    if (status == SyncStatus.ItemNewer)
-                    {
-                        UpdateVideoVariant(variantModel);
-                        LogInfo($"Updated the variant model '{model.Id}:{variantModel.Language}'");
-                    }
-
-                    if (status == SyncStatus.ModelNewer)
-                    {
-                        LogWarn($"Ignored the item '{variantItem.GetItemId()}' because it has been modified outside of Sitecore. Please run a sync to get the latest changes.");
-                    }
-
-                    if (status == SyncStatus.Unmodified)
-                    {
-                        LogDebug($"Ignored the item '{variantItem.GetItemId()}' because it has not been modified since last sync.");
-                    }
-                }
-                catch(Exception ex)
+                if((string)variantItem["Delete"] == "1")
                 {
-                    LogError($"An unexpected error occured updating the variant '{variantItem.GetItemId()}'", ex);
+                    LogInfo($"Deleting the item '{variantItem.GetItemId()}' because it has been marked for deletion in Sitecore");
+                    itemModelRepository.Delete(variantItem.GetItemId());
+                    continue;
                 }
+
+                ApplyMappings(mappingSets, variantItem, variantModel);
+                variantModel.Language = null;
+
+                variantModels.Add(variantModel);
             }
+
+            return variantModels;
         }
 
+        /*
         public bool ResolveVideoVariant(VideoVariant videoVariant, ItemModel item)
         {
             //If variant is new then continue
@@ -310,5 +237,6 @@ namespace Brightcove.DataExchangeFramework.Processors
 
             return false;
         }
+        */
     }
 }

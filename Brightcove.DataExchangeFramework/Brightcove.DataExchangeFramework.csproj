@@ -472,16 +472,15 @@
     <Compile Include="Processors\Get\GetVideosPipelineStepProcessor.cs" />
     <Compile Include="Processors\Resolve\ResolveFolderModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Resolve\ResolveLabelModelPipelineStepProcessor.cs" />
-    <Compile Include="Processors\Resolve\ResolvePlayerModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Resolve\ResolvePlayListModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\ApplyMappingPipelineStepProcessor.cs" />
     <Compile Include="Processors\Sync\FinishSyncPipelineStepProcessor.cs" />
+    <Compile Include="Processors\Sync\VerifySyncPipelineStepProcessor.cs" />
     <Compile Include="Processors\Sync\StartSyncPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdateAssetItemPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdateLabelModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdateFolderModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdatePlaylistModelPipelineStepProcessor.cs" />
-    <Compile Include="Processors\Update\UpdatePlayerModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdateVideoItemPipelineStepProcessor.cs" />
     <Compile Include="Processors\Update\UpdateVideoModelPipelineStepProcessor.cs" />
     <Compile Include="Processors\Resolve\ResolveVideoModelPipelineStepProcessor.cs" />

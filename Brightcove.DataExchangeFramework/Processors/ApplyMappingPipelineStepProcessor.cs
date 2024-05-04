@@ -124,7 +124,7 @@ namespace Brightcove.DataExchangeFramework.Processors
             }
             catch(Exception ex)
             {
-                logger.Error("Failed to update the asset item");
+                logger.Error("Failed to apply mapping(s) because an unexpected error occured", ex);
                 HandleError(pipelineContext);
             }
         }

@@ -50,7 +50,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                 LogDebug($"Updated the video item '{item.GetItemId()}'");
             }
 
-            var videoVariants = service.GetVideoVariants(model.Id);
+            var videoVariants = model.Variants ?? new List<VideoVariant>();
             var resolvedVariantItems = ResolveVideoVariants(videoVariants, item, itemLanguage);
 
             ApplyVariantMappings(mappingSettings.VariantMappingSets, resolvedVariantItems, itemLanguage);

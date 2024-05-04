@@ -19,7 +19,7 @@ namespace Brightcove.DataExchangeFramework.Processors
         {
             DateTime lastSyncStartTime = GetPluginOrFail<BrightcoveSyncSettings>(pipelineContext.GetCurrentPipelineBatch()).LastSyncStartTime;
 
-            var data = service.GetPlayers().Items.Where(p => p.LastModifiedDate > lastSyncStartTime);
+            var data = service.GetPlayers().Items.Where(p => p.Branches.Master.UpdatedAt > lastSyncStartTime);
             LogInfo("Identified " + data.Count() + " player model(s) that have been modified since last sync " + lastSyncStartTime);
 
             var dataSettings = new IterableDataSettings(data);
