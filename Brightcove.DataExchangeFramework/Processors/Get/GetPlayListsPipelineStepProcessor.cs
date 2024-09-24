@@ -38,7 +38,7 @@ namespace Brightcove.DataExchangeFramework.Processors
         protected virtual IEnumerable<PlayList> GetIterableData(WebApiSettings settings, PipelineStep pipelineStep)
         {
             IEnumerable<PlayList> playLists;
-            int limit = 100;
+            int limit = 1000;
 
             for (int offset = 0; offset < totalCount; offset += limit)
             {

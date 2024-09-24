@@ -46,7 +46,7 @@ namespace Brightcove.DataExchangeFramework.Processors
 
         protected virtual IEnumerable<Video> GetIterableData(PipelineStep pipelineStep)
         {
-            int limit = 100;
+            int limit = 1000;
 
             for (int offset = 0; offset < totalCount; offset += limit)
             {
