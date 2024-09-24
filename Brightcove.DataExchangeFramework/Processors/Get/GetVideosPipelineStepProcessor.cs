@@ -56,28 +56,5 @@ namespace Brightcove.DataExchangeFramework.Processors
                 }
             }
         }
-
-        private void GetCache()
-        {
-            Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
-        }
-
-        private Item GetParentFoldersItem()
-        {
-            var settings = Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
-            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
-            var foldersItem = Sitecore.Context.ContentDatabase.GetItem(accountItem.Paths.FullPath + "/Folders");
-
-            return foldersItem;
-        }
-
-        private Item GetParentLabelsItem()
-        {
-            var settings = Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
-            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
-            var parentLabelsItem = Sitecore.Context.ContentDatabase.GetItem(accountItem.Paths.FullPath + "/Labels");
-
-            return parentLabelsItem;
-        }
     }
 }
