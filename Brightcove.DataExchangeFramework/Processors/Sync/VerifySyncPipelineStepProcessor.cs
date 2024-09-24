@@ -28,6 +28,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                 {
                     logger.Error($"Aborting the pipeline because the last sync start/finish time has not been recorded. Please run the pull pipeline before starting this pipeline.");
                     pipelineContext.CriticalError = true;
+                    return;
                 }
 
                 settings.StartTime = DateTime.UtcNow;

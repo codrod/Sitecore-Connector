@@ -54,6 +54,9 @@ namespace Brightcove.DataExchangeFramework.Processors
                 if (endpointSettings == null)
                 {
                     LogFatal("Pipeline step processing will abort because the pipeline step is missing endpoint settings.");
+                    BrightcoveSyncSettingsHelper.SetErrorFlag(pipelineContext);
+                    pipelineContext.Finished = true;
+                    pipelineContext.CriticalError = false;
                     return;
                 }
 
@@ -62,6 +65,9 @@ namespace Brightcove.DataExchangeFramework.Processors
                 if (EndpointFrom == null)
                 {
                     LogFatal("Pipeline step processing will abort because the pipeline step is missing an endpoint to read from.");
+                    BrightcoveSyncSettingsHelper.SetErrorFlag(pipelineContext);
+                    pipelineContext.Finished = true;
+                    pipelineContext.CriticalError = false;
                     return;
                 }
 
@@ -70,9 +76,13 @@ namespace Brightcove.DataExchangeFramework.Processors
                 if (!WebApiSettings.Validate())
                 {
                     LogFatal("Pipeline step processing will abort because the Brightcove web API settings are invalid: " + WebApiSettings.ValidationMessage);
+                    BrightcoveSyncSettingsHelper.SetErrorFlag(pipelineContext);
+                    pipelineContext.Finished = true;
+                    pipelineContext.CriticalError = false;
                     return;
                 }
 
+                itemModelRepository = Sitecore.DataExchange.Context.ItemModelRepository;
                 service = new BrightcoveService(WebApiSettings.AccountId, WebApiSettings.ClientId, WebApiSettings.ClientSecret);
 
                 ProcessPipelineStepInternal(pipelineStep, pipelineContext, logger);

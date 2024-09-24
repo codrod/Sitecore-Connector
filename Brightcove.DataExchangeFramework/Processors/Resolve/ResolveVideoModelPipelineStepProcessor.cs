@@ -25,8 +25,20 @@ namespace Brightcove.DataExchangeFramework.Processors
         {
             ResolveAssetModelSettings resolveAssetModelSettings = GetPluginOrFail<ResolveAssetModelSettings>();
             ItemModel item = (ItemModel)pipelineContext.GetObjectFromPipelineContext(resolveAssetModelSettings.AssetItemLocation);
-            string videoId = (string)item["ID"];
-            Video video;
+            Video video = new Video();
+            string videoId = "";
+
+            //If the sitecore item is a video variant item then resolve the video (parent item)
+            if (item.GetTemplateId() == new Guid("{a7eaf4fd-bcf3-4511-9e8c-2ed0b165f1d6}"))
+            {
+                var database = Sitecore.Data.Database.GetDatabase(itemModelRepository.DatabaseName);
+                Item parentItem = database?.GetItem(new ID(item.GetItemId()))?.Parent ?? null;
+                videoId = parentItem["ID"];
+            }
+            else
+            {
+                videoId = (string)item["ID"];
+            }
 
             if (service.TryGetVideo(videoId, out video))
             {

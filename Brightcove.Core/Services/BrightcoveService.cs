@@ -306,6 +306,7 @@ namespace Brightcove.Core.Services
             Video newVideo = video.ShallowCopy();
             newVideo.Id = null;
             newVideo.Images = null;
+            newVideo.Variants = null;
 
             string content = JsonConvert.SerializeObject(newVideo);
 

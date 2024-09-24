@@ -24,6 +24,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                 if(settings == null || settings.ErrorFlag)
                 {
                     LogError($"Failed to finish the sync because an error has occured. Please correct the error(s) shown in the logs above and then run the sync again.");
+                    pipelineContext.CriticalError = true;
                     return;
                 }
 

@@ -28,15 +28,15 @@ namespace Brightcove.DataExchangeFramework.Processors
 
         protected override void ProcessPipelineStepInternal(PipelineStep pipelineStep = null, PipelineContext pipelineContext = null, ILogger logger = null)
         {
-            DateTime lastSyncStartTime = GetPluginOrFail<BrightcoveSyncSettings>(pipelineContext.GetCurrentPipelineBatch()).LastSyncStartTime;
+            BrightcoveSyncSettings syncSettings = GetPluginOrFail<BrightcoveSyncSettings>(pipelineContext.GetCurrentPipelineBatch());
 
-            if (lastSyncStartTime != DateTime.MinValue)
+            if (syncSettings.LastSyncStartTime != DateTime.MinValue)
             {
-                query = $"+updated_at:[{lastSyncStartTime.ToString()} TO *]";
+                query = $"+updated_at:[{syncSettings.LastSyncStartTime.ToString()} TO *]";
             }
 
             totalCount = service.VideosCount(query);
-            LogInfo("Identified " + totalCount + " video model(s) that have been modified since last sync "+ lastSyncStartTime);
+            LogInfo("Identified " + totalCount + " video model(s) that have been modified since last sync "+ syncSettings.LastSyncStartTime);
 
             var data = GetIterableData(pipelineStep);
             var dataSettings = new IterableDataSettings(data);
@@ -55,6 +55,29 @@ namespace Brightcove.DataExchangeFramework.Processors
                     yield return video;
                 }
             }
+        }
+
+        private void GetCache()
+        {
+            Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
+        }
+
+        private Item GetParentFoldersItem()
+        {
+            var settings = Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
+            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
+            var foldersItem = Sitecore.Context.ContentDatabase.GetItem(accountItem.Paths.FullPath + "/Folders");
+
+            return foldersItem;
+        }
+
+        private Item GetParentLabelsItem()
+        {
+            var settings = Sitecore.DataExchange.Context.GetPlugin<ResolveAssetItemSettings>();
+            var accountItem = Sitecore.Context.ContentDatabase.GetItem(settings.AcccountItemId);
+            var parentLabelsItem = Sitecore.Context.ContentDatabase.GetItem(accountItem.Paths.FullPath + "/Labels");
+
+            return parentLabelsItem;
         }
     }
 }

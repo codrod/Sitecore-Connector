@@ -21,6 +21,13 @@ namespace Brightcove.DataExchangeFramework.Processors
             {
                 var settings = pipelineStep.GetPlugin<BrightcoveSyncSettings>();
 
+                if (settings.ErrorFlag)
+                {
+                    logger.Error("Aborting the sync process because an error has been detected. Please resolve the error and then run the pipeline again.");
+                    pipelineContext.CriticalError = true;
+                    return;
+                }
+
                 DateTime.TryParse(((string)settings.AccountItem?["LastSyncStartTime"] ?? ""), out settings.LastSyncStartTime);
                 DateTime.TryParse(((string)settings.AccountItem?["LastSyncFinishTime"] ?? ""), out settings.LastSyncFinishTime);
                 settings.StartTime = DateTime.UtcNow;
