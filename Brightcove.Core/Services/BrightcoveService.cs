@@ -16,6 +16,9 @@ namespace Brightcove.Core.Services
     {
         readonly static HttpClient client = BrightcoveHttpClient.Instance;
 
+        int retryMax = 3;
+        int retryAttempt = 0;
+
         readonly string cmsBaseUrl = "https://cms.api.brightcove.com/v1/accounts";
         readonly string ingestBaseUrl = "https://ingest.api.brightcove.com/v1/accounts";
         readonly string playersBaseUrl = "https://players.api.brightcove.com/v1/accounts";
@@ -748,16 +751,30 @@ namespace Brightcove.Core.Services
 
         private HttpResponseMessage SendRequest(HttpRequestMessage request)
         {
-            request.Headers.Authorization = authenticationService.CreateAuthenticationHeader();
-
-            HttpResponseMessage response = client.Send(request);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                throw new HttpStatusException(request, response);
-            }
+                request.Headers.Authorization = authenticationService.CreateAuthenticationHeader();
 
-            return response;
+                HttpResponseMessage response = client.Send(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpStatusException(request, response);
+                }
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                if(retryAttempt < retryMax)
+                {
+                    retryAttempt++;
+                    return SendRequest(request);
+                }
+
+                retryAttempt = 0;
+                throw ex;
+            }
         }
     }
 }
