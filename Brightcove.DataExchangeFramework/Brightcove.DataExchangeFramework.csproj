@@ -160,33 +160,32 @@
     <Reference Include="Polly, Version=6.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
       <HintPath>..\packages\Polly.6.1.2\lib\netstandard2.0\Polly.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.6\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Buckets, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Buckets.10.3.0\lib\net48\Sitecore.Buckets.dll</HintPath>
+    <Reference Include="Sitecore.Buckets, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Buckets.10.4.0\lib\net48\Sitecore.Buckets.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Client, Version=18.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Client.10.3.0\lib\net48\Sitecore.Client.dll</HintPath>
+    <Reference Include="Sitecore.Client, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Client.10.4.0\lib\net48\Sitecore.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.ContentSearch.10.3.0\lib\net48\Sitecore.ContentSearch.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.10.4.0\lib\net48\Sitecore.ContentSearch.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Client, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.ContentSearch.Client.10.3.0\lib\net48\Sitecore.ContentSearch.Client.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Client, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.Client.10.4.0\lib\net48\Sitecore.ContentSearch.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Data, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.ContentSearch.Data.10.3.0\lib\net48\Sitecore.ContentSearch.Data.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Data, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.Data.10.4.0\lib\net48\Sitecore.ContentSearch.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Linq, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.ContentSearch.Linq.10.3.0\lib\net48\Sitecore.ContentSearch.Linq.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Linq, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.Linq.10.4.0\lib\net48\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Data.ResourceItems.Abstractions, Version=18.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Data.ResourceItems.Abstractions.10.3.0\lib\netstandard2.0\Sitecore.Data.ResourceItems.Abstractions.dll</HintPath>
+    <Reference Include="Sitecore.Data.ResourceItems.Abstractions, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Data.ResourceItems.Abstractions.10.4.0\lib\netstandard2.0\Sitecore.Data.ResourceItems.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Data.ResourceItems.ProtobufNet, Version=18.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Data.ResourceItems.ProtobufNet.10.3.0\lib\netstandard2.0\Sitecore.Data.ResourceItems.ProtobufNet.dll</HintPath>
+    <Reference Include="Sitecore.Data.ResourceItems.ProtobufNet, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Data.ResourceItems.ProtobufNet.10.4.0\lib\netstandard2.0\Sitecore.Data.ResourceItems.ProtobufNet.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.DataExchange, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -250,36 +249,39 @@
     <Reference Include="Sitecore.Framework.Rules.Serialization, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Framework.Rules.Serialization.6.0.0\lib\netstandard2.0\Sitecore.Framework.Rules.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Kernel, Version=18.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Kernel.10.3.0\lib\net48\Sitecore.Kernel.dll</HintPath>
+    <Reference Include="Sitecore.Kernel, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Kernel.10.4.0\lib\net48\Sitecore.Kernel.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Kernel.Portable, Version=18.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Kernel.Portable.10.3.0\lib\netstandard2.0\Sitecore.Kernel.Portable.dll</HintPath>
+    <Reference Include="Sitecore.Kernel.Portable, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Kernel.Portable.10.4.0\lib\netstandard2.0\Sitecore.Kernel.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Logging, Version=15.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Logging.10.3.0\lib\net48\Sitecore.Logging.dll</HintPath>
+    <Reference Include="Sitecore.Logging, Version=16.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Logging.10.4.0\lib\net48\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Logging.Client, Version=15.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Logging.Client.10.3.0\lib\net48\Sitecore.Logging.Client.dll</HintPath>
+    <Reference Include="Sitecore.Logging.Client, Version=16.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Logging.Client.10.4.0\lib\net48\Sitecore.Logging.Client.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Nexus.Consumption, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9de34fe2109de40c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Nexus.Consumption.1.5.0\lib\netstandard2.0\Sitecore.Nexus.Consumption.dll</HintPath>
+      <HintPath>..\packages\Sitecore.Nexus.Consumption.1.6.0\lib\netstandard2.0\Sitecore.Nexus.Consumption.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Nexus.Licensing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9de34fe2109de40c, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Nexus.Licensing.2.0.6\lib\netstandard2.0\Sitecore.Nexus.Licensing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Services.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Services.Core.10.3.0\lib\net48\Sitecore.Services.Core.dll</HintPath>
+    <Reference Include="Sitecore.Screenshots, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Screenshots.10.4.0\lib\netstandard2.0\Sitecore.Screenshots.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Services.Infrastructure, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Services.Infrastructure.10.3.0\lib\net48\Sitecore.Services.Infrastructure.dll</HintPath>
+    <Reference Include="Sitecore.Services.Core, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Services.Core.10.4.0\lib\net48\Sitecore.Services.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Services.Infrastructure.Sitecore, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Services.Infrastructure.Sitecore.10.3.0\lib\net48\Sitecore.Services.Infrastructure.Sitecore.dll</HintPath>
+    <Reference Include="Sitecore.Services.Infrastructure, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Services.Infrastructure.10.4.0\lib\net48\Sitecore.Services.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Web, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Web.10.3.0\lib\net48\Sitecore.Web.dll</HintPath>
+    <Reference Include="Sitecore.Services.Infrastructure.Sitecore, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Services.Infrastructure.Sitecore.10.4.0\lib\net48\Sitecore.Services.Infrastructure.Sitecore.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Web, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Web.10.4.0\lib\net48\Sitecore.Web.dll</HintPath>
     </Reference>
     <Reference Include="sysglobl" />
     <Reference Include="System" />
