@@ -55,6 +55,7 @@ namespace Brightcove.DataExchangeFramework.Processors
             string language = pipelineContext.GetPlugin<SelectedLanguagesSettings>()?.Languages?.FirstOrDefault() ?? "en";
             string parentItemMediaPath = GetAssetParentItemMediaPath(pipelineContext);
             Item parentItem = pipelineContext.CurrentPipelineStep.GetPlugin<ResolveAssetItemSettings>().ParentItem;
+            Database database = Sitecore.Data.Database.GetDatabase(repository.DatabaseName);
 
             if (parentItem == null)
             {
@@ -70,13 +71,36 @@ namespace Brightcove.DataExchangeFramework.Processors
                 using (IProviderSearchContext searchContext = ContentSearchManager.GetIndex(IItemModelRepositoryHelper.GetIndexName(repository)).CreateSearchContext())
                 {
                     //Since we must search the index becasue the target folder is a bucket the items must have a field called 'ID' that can be used to identify them
-                    AssetSearchResult searchResult = searchContext.GetQueryable<AssetSearchResult>().FirstOrDefault(x => x.Path.Contains(parentItemMediaPath) && x.ID == convertedValue && x.Language == language);
-                    resolvedItem = searchResult?.GetItem()?.GetItemModel();
+                    List<AssetSearchResult> searchResults = searchContext.GetQueryable<AssetSearchResult>()
+                        .Where(x => x.Path.Contains(parentItemMediaPath) && x.ID == convertedValue && x.Language == language)
+                        .ToList();
+
+                    if(searchResults.Count > 1)
+                    {
+                        for(int i = 1; i < searchResults.Count; i++)
+                        {
+                            logger.Warn($"Deleting the asset item '{searchResults[0].ItemId}' because it is a duplicate of '{searchResults[i].ItemId}'");
+                            database.GetItem(searchResults[i].ItemId).Delete();
+                        }
+                    }
+
+                    resolvedItem = searchResults[0]?.GetItem()?.GetItemModel();
                 }
             }
             else
             {
-                resolvedItem = parentItem.Children?.Where(c => c[fieldName] == convertedValue)?.FirstOrDefault()?.GetItemModel();
+                var searchResults = parentItem.Children?.Where(c => c[fieldName] == convertedValue)?.ToList();
+
+                if(searchResults.Count > 1)
+                {
+                    for (int i = 1; i < searchResults.Count; i++)
+                    {
+                        logger.Warn($"Deleting the asset item '{searchResults[0].ID}' because it is a duplicate of '{searchResults[i].ID}'");
+                        searchResults[i].Delete();
+                    }
+                }
+
+                resolvedItem = searchResults[0]?.GetItemModel();
             }
 
             //Make sure we update the item name if it has changed. (The name is initially set as part of the CreateNewItem method)
