@@ -84,7 +84,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                         }
                     }
 
-                    resolvedItem = searchResults[0]?.GetItem()?.GetItemModel();
+                    resolvedItem = searchResults.FirstOrDefault()?.GetItem()?.GetItemModel();
                 }
             }
             else
@@ -100,7 +100,7 @@ namespace Brightcove.DataExchangeFramework.Processors
                     }
                 }
 
-                resolvedItem = searchResults[0]?.GetItemModel();
+                resolvedItem = searchResults.FirstOrDefault()?.GetItemModel();
             }
 
             //Make sure we update the item name if it has changed. (The name is initially set as part of the CreateNewItem method)

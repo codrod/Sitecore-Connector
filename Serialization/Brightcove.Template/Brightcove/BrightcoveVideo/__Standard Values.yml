@@ -5,9 +5,17 @@ Template: "6a5c6835-6e11-4602-a11d-b626e9255397"
 Path: /sitecore/templates/Brightcove/BrightcoveVideo/__Standard Values
 DB: master
 SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Type: TreelistEx
+  Value: "{A7EAF4FD-BCF3-4511-9E8C-2ED0B165F1D6}"
 - ID: "9135200a-5626-4dd8-ab9d-d665b8c11748"
   Hint: __Never publish
   Type: checkbox
+  Value: 1
+- ID: "c9283d9e-7c29-4419-9c28-5a5c8ff53e84"
+  Hint: __Bucketable
+  Type: Checkbox
   Value: 1
 Languages:
 - Language: en
