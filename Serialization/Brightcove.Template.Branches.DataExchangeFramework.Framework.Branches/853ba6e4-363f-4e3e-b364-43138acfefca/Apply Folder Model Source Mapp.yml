@@ -5,9 +5,6 @@ Template: "ab4af4df-d282-4cd1-8268-fa12a9e457a3"
 Path: /sitecore/templates/Branches/Data Exchange/Framework/Branches/Brightcove Tenant/$name/Pipelines/Subpipelines/Update Item Pipelines/Update Folder Items Pipeline/Apply Folder Model Source Mapping Set
 DB: master
 SharedFields:
-- ID: "0bec5601-99c5-40be-a18e-a17020957180"
-  Hint: MappingSet
-  Value: "{38B6B14A-DC3B-489D-A599-50BBF205052F}"
 - ID: "506bad49-3da6-474c-acb5-7bcb509bfbd7"
   Hint: Enabled
   Type: Checkbox

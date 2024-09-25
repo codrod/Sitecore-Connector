@@ -5,9 +5,6 @@ Template: "ab4af4df-d282-4cd1-8268-fa12a9e457a3"
 Path: /sitecore/templates/Branches/Data Exchange/Framework/Branches/Brightcove Tenant/$name/Pipelines/Subpipelines/Update Item Pipelines/Update Label Items Pipeline/Apply Label Model Source Mapping Set
 DB: master
 SharedFields:
-- ID: "0bec5601-99c5-40be-a18e-a17020957180"
-  Hint: MappingSet
-  Value: "{289A1F12-65DD-44C8-AE6B-A08670E91852}"
 - ID: "506bad49-3da6-474c-acb5-7bcb509bfbd7"
   Hint: Enabled
   Type: Checkbox
