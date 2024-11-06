@@ -27,7 +27,7 @@ namespace Brightcove.DataExchangeFramework.ValueReaders
                     try
                     {
                         var stringDictionary = obj as IDictionary<string, string>;
-                        obj = string.Join("&", stringDictionary.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}").ToArray());
+                        obj = string.Join("&", stringDictionary.Select(p => $"{p.Key}={HttpUtility.UrlPathEncode(p.Value)}").ToArray());
                     }
                     catch
                     {
