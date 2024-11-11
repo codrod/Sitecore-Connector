@@ -32,7 +32,7 @@ namespace Brightcove.DataExchangeFramework.Processors
 
             if (syncSettings.LastSyncStartTime != DateTime.MinValue)
             {
-                query = $"+updated_at:[{syncSettings.LastSyncStartTime.ToString()} TO *]";
+                query = $"+updated_at:[{syncSettings.LastSyncStartTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}Z TO *]";
             }
 
             totalCount = service.VideosCount(query);
